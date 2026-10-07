@@ -1,0 +1,319 @@
+<title>Algebra 2 Practice Set</title>
+<meta name="description" content="25 multiple-choice Algebra 2 practice problems with instant feedback and explanations.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;700&family=Source+Sans+3:wght@400;600;700&family=STIX+Two+Text:ital@0;1&display=swap">
+<style>
+/* Layout: a single graph-paper column; a sticky score strip on top, problems grouped by topic below. */
+:root {
+  --paper: #f6f8f7;
+  --grid: #dfe8e5;
+  --card: #ffffff;
+  --ink: #1d2b36;
+  --muted: #5b6b74;
+  --line: #cfd9d6;
+  --accent: #2f6f8f;       /* graph-paper blue */
+  --accent-soft: #e3eef3;
+  --good: #1f7a4a;
+  --good-soft: #e2f3e9;
+  --bad: #b23a33;
+  --bad-soft: #f8e4e2;
+  --font-display: "Zilla Slab", Rockwell, Georgia, serif;
+  --font-body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --font-math: "STIX Two Text", "Cambria Math", "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #141b1f; --grid: #1c262b; --card: #1a2328; --ink: #e4ecef; --muted: #9aabb3;
+    --line: #2c3a41; --accent: #7cb8d6; --accent-soft: #1f3440;
+    --good: #6fcf97; --good-soft: #173527; --bad: #f08a80; --bad-soft: #3d1f1d;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #141b1f; --grid: #1c262b; --card: #1a2328; --ink: #e4ecef; --muted: #9aabb3;
+  --line: #2c3a41; --accent: #7cb8d6; --accent-soft: #1f3440;
+  --good: #6fcf97; --good-soft: #173527; --bad: #f08a80; --bad-soft: #3d1f1d;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--ink);
+  font: 17px/1.55 var(--font-body);
+  margin: 0;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding-inline: 16px; padding-block: 32px 64px; }
+header h1 {
+  font: 700 clamp(2rem, 6vw, 2.8rem)/1.1 var(--font-display);
+  margin: 0 0 8px; text-wrap: balance;
+}
+header p { color: var(--muted); margin: 0; max-width: 60ch; }
+.m { font-family: var(--font-math); font-size: 1.08em; white-space: nowrap; }
+.m i { font-style: italic; }
+
+.score {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  margin-block: 24px; padding: 12px 16px;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px;
+}
+.score .num { font: 700 1.5rem/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.score .label { font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.bar { flex: 1 1 160px; height: 8px; border-radius: 4px; background: var(--accent-soft); overflow: hidden; display: flex; }
+.bar span { display: block; height: 100%; transition: width .3s; }
+.bar .g { background: var(--good); } .bar .b { background: var(--bad); }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+button.tool {
+  font: 600 .9rem var(--font-body); color: var(--accent); background: transparent;
+  border: 1px solid var(--accent); border-radius: 6px; padding: 6px 12px; cursor: pointer;
+}
+button.tool:hover { background: var(--accent-soft); }
+button.tool[aria-pressed="true"] { background: var(--accent); color: var(--card); }
+
+section.topic { margin-top: 36px; }
+section.topic h2 {
+  font: 700 1.3rem var(--font-display); margin: 0 0 12px; color: var(--accent);
+  border-bottom: 2px solid var(--accent); padding-bottom: 4px;
+}
+.qlist { display: grid; gap: 14px; }
+.q { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.q[hidden] { display: none !important; }
+.q .stem { display: flex; gap: 10px; margin-bottom: 12px; }
+.q .n { font: 700 1rem var(--font-display); color: var(--muted); font-variant-numeric: tabular-nums; min-width: 2ch; }
+.q .stem p { margin: 0; min-width: 0; }
+.choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 520px) { .choices { grid-template-columns: 1fr; } }
+.choices button {
+  display: flex; gap: 10px; align-items: baseline; text-align: left;
+  font: inherit; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; cursor: pointer;
+}
+.choices button:hover:not(:disabled) { border-color: var(--accent); }
+.choices button:focus-visible, button.tool:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.choices button:disabled { cursor: default; }
+.choices .letter { font-weight: 700; color: var(--muted); }
+.choices button.correct { background: var(--good-soft); border-color: var(--good); }
+.choices button.correct .letter { color: var(--good); }
+.choices button.wrong { background: var(--bad-soft); border-color: var(--bad); }
+.choices button.wrong .letter { color: var(--bad); }
+.feedback { margin-top: 12px; padding: 10px 12px; border-radius: 8px; font-size: .95rem; }
+.feedback.good { background: var(--good-soft); }
+.feedback.bad { background: var(--bad-soft); }
+.feedback strong { display: block; }
+.feedback.good strong { color: var(--good); } .feedback.bad strong { color: var(--bad); }
+.done { margin-top: 32px; padding: 16px; border: 2px dashed var(--accent); border-radius: 10px; background: var(--card); }
+.done h2 { font: 700 1.3rem var(--font-display); margin: 0 0 4px; }
+.done p { margin: 0; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .bar span { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Algebra 2 Practice Set</h1>
+    <p>25 multiple-choice problems covering the core Algebra 2 topics. Pick an answer to see if you're right and why. Work each one on scratch paper first.</p>
+  </header>
+
+  <div class="score" aria-live="polite">
+    <div><div class="num" id="scoreNum">0 / 0</div><div class="label">Correct</div></div>
+    <div><div class="num" id="leftNum">25</div><div class="label">Left</div></div>
+    <div class="bar" aria-hidden="true"><span class="g" id="barG"></span><span class="b" id="barB"></span></div>
+    <div class="actions">
+      <button class="tool" id="missedBtn" aria-pressed="false">Show missed only</button>
+      <button class="tool" id="resetBtn">Start over</button>
+    </div>
+  </div>
+
+  <main id="quiz"></main>
+  <div class="done" id="done" hidden>
+    <h2 id="doneTitle"></h2>
+    <p id="doneText"></p>
+  </div>
+</div>
+
+<script>
+const M = s => `<span class="m">${s}</span>`;
+const Q = [
+  { t: "Linear equations & systems", q: `Solve ${M("3<i>x</i> − 7 = 11")}.`,
+    c: [M("<i>x</i> = 6"), M("<i>x</i> = 4/3"), M("<i>x</i> = 18"), M("<i>x</i> = −6")], a: 0,
+    why: `Add 7 to both sides: ${M("3<i>x</i> = 18")}. Divide by 3: ${M("<i>x</i> = 6")}.` },
+  { t: "Linear equations & systems", q: `Solve the system ${M("<i>x</i> + <i>y</i> = 10")} and ${M("<i>x</i> − <i>y</i> = 4")}.`,
+    c: [M("(7, 3)"), M("(3, 7)"), M("(6, 4)"), M("(14, −4)")], a: 0,
+    why: `Add the equations: ${M("2<i>x</i> = 14")}, so ${M("<i>x</i> = 7")}. Then ${M("<i>y</i> = 10 − 7 = 3")}.` },
+  { t: "Linear equations & systems", q: `Solve ${M("|<i>x</i> − 4| = 6")}.`,
+    c: [M("<i>x</i> = 10 or <i>x</i> = −2"), M("<i>x</i> = 10 only"), M("<i>x</i> = −10 or <i>x</i> = 2"), M("<i>x</i> = 2 or <i>x</i> = 10")], a: 0,
+    why: `Split into two cases: ${M("<i>x</i> − 4 = 6")} gives 10, and ${M("<i>x</i> − 4 = −6")} gives −2.` },
+
+  { t: "Quadratics", q: `Factor ${M("<i>x</i>² − 5<i>x</i> + 6")}.`,
+    c: [M("(<i>x</i> − 2)(<i>x</i> − 3)"), M("(<i>x</i> + 2)(<i>x</i> + 3)"), M("(<i>x</i> − 1)(<i>x</i> − 6)"), M("(<i>x</i> + 1)(<i>x</i> − 6)")], a: 0,
+    why: `You need two numbers that multiply to 6 and add to −5: −2 and −3.` },
+  { t: "Quadratics", q: `Solve ${M("<i>x</i>² − 9 = 0")}.`,
+    c: [M("<i>x</i> = ±3"), M("<i>x</i> = 3"), M("<i>x</i> = 9"), M("<i>x</i> = ±9")], a: 0,
+    why: `${M("<i>x</i>² = 9")}, so ${M("<i>x</i> = 3")} or ${M("<i>x</i> = −3")}. Don't forget the negative root.` },
+  { t: "Quadratics", q: `Use the quadratic formula to solve ${M("<i>x</i>² + 4<i>x</i> + 1 = 0")}.`,
+    c: [M("−2 ± √3"), M("2 ± √3"), M("−4 ± √3"), M("−2 ± √5")], a: 0,
+    why: `${M("<i>x</i> = (−4 ± √(16 − 4)) / 2 = (−4 ± √12) / 2 = (−4 ± 2√3) / 2 = −2 ± √3")}.` },
+  { t: "Quadratics", q: `How many and what kind of solutions does ${M("2<i>x</i>² − 3<i>x</i> + 5 = 0")} have?`,
+    c: ["Two distinct real solutions", "One repeated real solution", "Two non-real complex solutions", "Infinitely many solutions"], a: 2,
+    why: `Discriminant: ${M("<i>b</i>² − 4<i>ac</i> = 9 − 40 = −31")}. A negative discriminant means two complex (non-real) solutions.` },
+  { t: "Quadratics", q: `What is the vertex of ${M("<i>y</i> = (<i>x</i> − 4)² + 2")}?`,
+    c: [M("(4, 2)"), M("(−4, 2)"), M("(4, −2)"), M("(2, 4)")], a: 0,
+    why: `Vertex form ${M("<i>y</i> = (<i>x</i> − <i>h</i>)² + <i>k</i>")} has vertex ${M("(<i>h</i>, <i>k</i>)")}. Watch the sign: ${M("<i>x</i> − 4")} means ${M("<i>h</i> = 4")}.` },
+  { t: "Quadratics", q: `What is the vertex of ${M("<i>y</i> = <i>x</i>² − 6<i>x</i> + 5")}?`,
+    c: [M("(3, −4)"), M("(−3, 32)"), M("(6, 5)"), M("(3, 4)")], a: 0,
+    why: `${M("<i>x</i> = −<i>b</i>/(2<i>a</i>) = 6/2 = 3")}. Plug in: ${M("9 − 18 + 5 = −4")}.` },
+
+  { t: "Complex numbers", q: `Simplify ${M("<i>i</i>⁷")}.`,
+    c: [M("<i>i</i>"), M("−1"), M("−<i>i</i>"), M("1")], a: 2,
+    why: `Powers of ${M("<i>i</i>")} repeat every 4. 7 ÷ 4 leaves remainder 3, and ${M("<i>i</i>³ = −<i>i</i>")}.` },
+  { t: "Complex numbers", q: `Multiply ${M("(3 + 2<i>i</i>)(1 − <i>i</i>)")}.`,
+    c: [M("5 − <i>i</i>"), M("1 − <i>i</i>"), M("3 − 2<i>i</i>"), M("5 + <i>i</i>")], a: 0,
+    why: `FOIL: ${M("3 − 3<i>i</i> + 2<i>i</i> − 2<i>i</i>²")}. Since ${M("<i>i</i>² = −1")}, that's ${M("3 − <i>i</i> + 2 = 5 − <i>i</i>")}.` },
+
+  { t: "Exponents & radicals", q: `Simplify ${M("√50")}.`,
+    c: [M("5√2"), M("25√2"), M("2√5"), M("10√5")], a: 0,
+    why: `${M("√50 = √(25 · 2) = 5√2")}.` },
+  { t: "Exponents & radicals", q: `Evaluate ${M("8<sup>2/3</sup>")}.`,
+    c: [M("4"), M("2"), M("16"), M("16/3")], a: 0,
+    why: `Take the cube root first, then square: ${M("∛8 = 2")}, and ${M("2² = 4")}.` },
+  { t: "Exponents & radicals", q: `Simplify ${M("<i>x</i>³ · <i>x</i>⁴ / <i>x</i>²")}.`,
+    c: [M("<i>x</i>⁵"), M("<i>x</i>¹⁰"), M("<i>x</i>⁶"), M("<i>x</i>¹⁴")], a: 0,
+    why: `Add exponents when multiplying, subtract when dividing: ${M("3 + 4 − 2 = 5")}.` },
+  { t: "Exponents & radicals", q: `What is the domain of ${M("<i>f</i>(<i>x</i>) = √(<i>x</i> − 5)")}?`,
+    c: [M("<i>x</i> ≥ 5"), M("<i>x</i> > 5"), M("<i>x</i> ≥ −5"), "All real numbers"], a: 0,
+    why: `The expression under a square root can't be negative: ${M("<i>x</i> − 5 ≥ 0")}. Zero is allowed, so it's ≥, not >.` },
+
+  { t: "Exponentials & logarithms", q: `Evaluate ${M("log₂ 32")}.`,
+    c: [M("5"), M("16"), M("6"), M("4")], a: 0,
+    why: `Ask "2 to what power is 32?" ${M("2⁵ = 32")}.` },
+  { t: "Exponentials & logarithms", q: `Solve ${M("3<sup><i>x</i></sup> = 81")}.`,
+    c: [M("<i>x</i> = 4"), M("<i>x</i> = 27"), M("<i>x</i> = 3"), M("<i>x</i> = 9")], a: 0,
+    why: `Write 81 as a power of 3: ${M("81 = 3⁴")}, so ${M("<i>x</i> = 4")}.` },
+  { t: "Exponentials & logarithms", q: `Which equation is equivalent to ${M("log₅ 125 = 3")}?`,
+    c: [M("5³ = 125"), M("3⁵ = 125"), M("125³ = 5"), M("5<sup>125</sup> = 3")], a: 0,
+    why: `${M("log<sub><i>b</i></sub> <i>y</i> = <i>x</i>")} means ${M("<i>b</i><sup><i>x</i></sup> = <i>y</i>")}. The base stays the base.` },
+  { t: "Exponentials & logarithms", q: `Which expression equals ${M("log <i>a</i> + log <i>b</i>")}?`,
+    c: [M("log(<i>ab</i>)"), M("log(<i>a</i> + <i>b</i>)"), M("(log <i>a</i>)(log <i>b</i>)"), M("log(<i>a</i>/<i>b</i>)")], a: 0,
+    why: `Product rule: adding logs with the same base multiplies their inputs.` },
+  { t: "Exponentials & logarithms", q: `You invest $1,000 at 5% interest compounded annually. How much do you have after 2 years?`,
+    c: [M("$1,102.50"), M("$1,100.00"), M("$1,105.00"), M("$1,050.00")], a: 0,
+    why: `${M("<i>A</i> = <i>P</i>(1 + <i>r</i>)<sup><i>t</i></sup> = 1000(1.05)² = 1000 · 1.1025 = 1102.50")}. $1,100 would be simple interest.` },
+
+  { t: "Functions", q: `If ${M("<i>f</i>(<i>x</i>) = 2<i>x</i> + 1")} and ${M("<i>g</i>(<i>x</i>) = <i>x</i>²")}, find ${M("<i>f</i>(<i>g</i>(3))")}.`,
+    c: [M("19"), M("49"), M("13"), M("37")], a: 0,
+    why: `Work inside out: ${M("<i>g</i>(3) = 9")}, then ${M("<i>f</i>(9) = 19")}. (49 is ${M("<i>g</i>(<i>f</i>(3))")}.)` },
+  { t: "Functions", q: `Find the inverse of ${M("<i>f</i>(<i>x</i>) = 3<i>x</i> − 2")}.`,
+    c: [M("(<i>x</i> + 2) / 3"), M("(<i>x</i> − 2) / 3"), M("3<i>x</i> + 2"), M("1 / (3<i>x</i> − 2)")], a: 0,
+    why: `Swap ${M("<i>x</i>")} and ${M("<i>y</i>")}: ${M("<i>x</i> = 3<i>y</i> − 2")}. Solve: ${M("<i>y</i> = (<i>x</i> + 2)/3")}.` },
+
+  { t: "Polynomials & rational expressions", q: `Divide ${M("(<i>x</i>³ − 8) ÷ (<i>x</i> − 2)")}.`,
+    c: [M("<i>x</i>² + 2<i>x</i> + 4"), M("<i>x</i>² − 2<i>x</i> + 4"), M("<i>x</i>² + 4"), M("<i>x</i>² + 2<i>x</i> − 4")], a: 0,
+    why: `Difference of cubes: ${M("<i>a</i>³ − <i>b</i>³ = (<i>a</i> − <i>b</i>)(<i>a</i>² + <i>ab</i> + <i>b</i>²)")}.` },
+  { t: "Polynomials & rational expressions", q: `Simplify ${M("(<i>x</i>² − 4) / (<i>x</i>² + 4<i>x</i> + 4)")}.`,
+    c: [M("(<i>x</i> − 2) / (<i>x</i> + 2)"), M("(<i>x</i> + 2) / (<i>x</i> − 2)"), M("−1 / (<i>x</i> + 1)"), M("<i>x</i> − 2")], a: 0,
+    why: `Factor: ${M("(<i>x</i> − 2)(<i>x</i> + 2) / (<i>x</i> + 2)²")}. Cancel one ${M("(<i>x</i> + 2)")}. Never cancel individual terms like ${M("<i>x</i>²")}.` },
+  { t: "Polynomials & rational expressions", q: `Describe the end behavior of ${M("<i>f</i>(<i>x</i>) = −2<i>x</i>⁴ + <i>x</i>")}.`,
+    c: ["Both ends go down", "Both ends go up", "Left up, right down", "Left down, right up"], a: 0,
+    why: `The leading term ${M("−2<i>x</i>⁴")} has even degree (ends match) and a negative coefficient (ends point down).` },
+];
+
+// Shuffle each question's choices with a fixed seed so the right answer isn't always in the same spot.
+function seeded(n) { let s = n * 9301 + 49297; return () => (s = (s * 9301 + 49297) % 233280) / 233280; }
+Q.forEach((item, i) => {
+  const rnd = seeded(i + 7);
+  const order = item.c.map((_, k) => k);
+  for (let k = order.length - 1; k > 0; k--) { const j = Math.floor(rnd() * (k + 1)); [order[k], order[j]] = [order[j], order[k]]; }
+  item.c = order.map(k => item.c[k]);
+  item.a = order.indexOf(item.a);
+});
+
+const KEY = "alg2-answers";
+let answers = {};
+try { answers = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { answers = {}; }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(answers)); } catch (e) {} };
+let missedOnly = false;
+
+const quiz = document.getElementById("quiz");
+function render() {
+  quiz.innerHTML = "";
+  const topics = [...new Set(Q.map(x => x.t))];
+  topics.forEach(topic => {
+    const sec = document.createElement("section");
+    sec.className = "topic";
+    sec.innerHTML = `<h2>${topic}</h2><div class="qlist"></div>`;
+    const list = sec.querySelector(".qlist");
+    Q.forEach((item, i) => {
+      if (item.t !== topic) return;
+      const card = document.createElement("article");
+      card.className = "q"; card.id = "q" + (i + 1);
+      card.innerHTML = `<div class="stem"><span class="n">${i + 1}.</span><p>${item.q}</p></div><div class="choices"></div><div class="fb"></div>`;
+      const box = card.querySelector(".choices");
+      item.c.forEach((choice, k) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.innerHTML = `<span class="letter">${"ABCD"[k]}</span><span>${choice}</span>`;
+        b.addEventListener("click", () => { answers[i] = k; save(); paint(card, i); update(); });
+        box.appendChild(b);
+      });
+      list.appendChild(card);
+      paint(card, i);
+    });
+    quiz.appendChild(sec);
+  });
+  update();
+}
+
+function paint(card, i) {
+  const item = Q[i], pick = answers[i];
+  const btns = card.querySelectorAll(".choices button");
+  const fb = card.querySelector(".fb");
+  btns.forEach((b, k) => {
+    b.className = ""; b.disabled = pick !== undefined;
+    if (pick === undefined) return;
+    if (k === item.a) b.className = "correct";
+    else if (k === pick) b.className = "wrong";
+  });
+  if (pick === undefined) { fb.innerHTML = ""; return; }
+  const ok = pick === item.a;
+  fb.innerHTML = `<div class="feedback ${ok ? "good" : "bad"}"><strong>${ok ? "Correct" : "Not quite. The answer is " + "ABCD"[item.a] + "."}</strong>${item.why}</div>`;
+}
+
+function update() {
+  const done = Object.keys(answers).length;
+  const right = Object.entries(answers).filter(([i, k]) => Q[i].a === k).length;
+  document.getElementById("scoreNum").textContent = `${right} / ${done}`;
+  document.getElementById("leftNum").textContent = Q.length - done;
+  document.getElementById("barG").style.width = (right / Q.length * 100) + "%";
+  document.getElementById("barB").style.width = ((done - right) / Q.length * 100) + "%";
+  Q.forEach((item, i) => {
+    const card = document.getElementById("q" + (i + 1));
+    card.hidden = missedOnly && !(answers[i] !== undefined && answers[i] !== item.a);
+  });
+  document.querySelectorAll("section.topic").forEach(s => { s.hidden = ![...s.querySelectorAll(".q")].some(c => !c.hidden); });
+  const box = document.getElementById("done");
+  box.hidden = done < Q.length;
+  if (done === Q.length) {
+    const pct = Math.round(right / Q.length * 100);
+    document.getElementById("doneTitle").textContent = `You scored ${right} out of ${Q.length} (${pct}%)`;
+    document.getElementById("doneText").textContent = right === Q.length
+      ? "Perfect score. Try it again tomorrow to make it stick."
+      : "Press \"Show missed only\" to review the problems you got wrong, then start over and try again.";
+  }
+}
+
+document.getElementById("missedBtn").addEventListener("click", e => {
+  missedOnly = !missedOnly;
+  e.currentTarget.setAttribute("aria-pressed", missedOnly);
+  update();
+});
+document.getElementById("resetBtn").addEventListener("click", () => {
+  answers = {}; save(); missedOnly = false;
+  document.getElementById("missedBtn").setAttribute("aria-pressed", "false");
+  render(); window.scrollTo(0, 0);
+});
+render();
+</script>
