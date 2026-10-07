@@ -12,8 +12,6 @@ Usage:
     python3 kraken_scanner.py --json results.json # also save results
 """
 
-from __future__ import annotations
-
 import argparse
 import json
 import math
@@ -21,7 +19,6 @@ import sys
 import time
 import urllib.parse
 import urllib.request
-from dataclasses import asdict, dataclass
 
 API = "https://api.kraken.com/0/public"
 HOURS_PER_YEAR = 24 * 365
@@ -31,7 +28,7 @@ HOURS_PER_YEAR = 24 * 365
 # Kraken public API
 # --------------------------------------------------------------------------
 
-def kraken_get(endpoint: str, params: dict | None = None, retries: int = 3) -> dict:
+def kraken_get(endpoint, params=None, retries=3):
     url = f"{API}/{endpoint}"
     if params:
         url += "?" + urllib.parse.urlencode(params)
@@ -50,7 +47,7 @@ def kraken_get(endpoint: str, params: dict | None = None, retries: int = 3) -> d
     raise RuntimeError("unreachable")
 
 
-def usd_pairs() -> dict[str, str]:
+def usd_pairs():
     """Return {pair_key: display_name} for online spot pairs quoted in USD."""
     pairs = kraken_get("AssetPairs")
     out = {}
@@ -63,7 +60,7 @@ def usd_pairs() -> dict[str, str]:
     return out
 
 
-def tickers(pair_keys: list[str]) -> dict:
+def tickers(pair_keys):
     result = {}
     for i in range(0, len(pair_keys), 100):
         chunk = pair_keys[i:i + 100]
@@ -72,7 +69,7 @@ def tickers(pair_keys: list[str]) -> dict:
     return result
 
 
-def ohlc(pair_key: str, interval: int = 60) -> list[dict]:
+def ohlc(pair_key, interval=60):
     """Hourly candles (Kraken returns up to 720). Drops the still-open last candle."""
     res = kraken_get("OHLC", {"pair": pair_key, "interval": interval})
     rows = next(v for k, v in res.items() if k != "last")
@@ -161,29 +158,14 @@ def clip(x, lo=-3.0, hi=3.0):
 # Signals and score
 # --------------------------------------------------------------------------
 
-@dataclass
 class Result:
-    pair: str
-    price: float
-    score: float
-    ret_24h: float
-    ret_7d: float
-    mom_z_24h: float
-    mom_z_7d: float
-    vol_z: float
-    rsi14: float
-    trend_r2: float
-    trend_t: float
-    squeeze_pct: float
-    breakout: bool
-    ann_vol: float
-    stop: float
-    target: float
-    reward_risk: float
-    notes: str
+    """One scanned pair's signals (a plain class so it runs on Python 3.6)."""
+
+    def __init__(self, **fields):
+        self.__dict__.update(fields)
 
 
-def analyze(pair: str, candles: list[dict]) -> Result | None:
+def analyze(pair, candles):
     if len(candles) < 300:
         return None
     closes = [c["c"] for c in candles]
@@ -291,7 +273,7 @@ def fmt_price(p):
     return f"{p:,.2f}" if p >= 1 else f"{p:.6g}"
 
 
-def print_table(results: list[Result]):
+def print_table(results):
     hdr = f"{'#':>2} {'PAIR':<14}{'SCORE':>6}{'PRICE':>13}{'24h%':>8}{'7d%':>8}{'z24':>6}{'volZ':>6}{'RSI':>6}{'R2':>5}{'R:R':>6}  NOTES"
     print(hdr)
     print("-" * len(hdr))
@@ -304,7 +286,7 @@ def print_table(results: list[Result]):
             print(f"  {r.pair:<14} entry {fmt_price(r.price)}  stop {fmt_price(r.stop)}  target {fmt_price(r.target)}")
 
 
-def scan(min_volume: float, top: int, max_pairs: int) -> list[Result]:
+def scan(min_volume, top, max_pairs):
     pairs = usd_pairs()
     tick = tickers(list(pairs))
     liquid = []
@@ -345,7 +327,7 @@ def main(argv=None):
         print_table(results)
         if args.json:
             with open(args.json, "w") as f:
-                json.dump([asdict(r) for r in results], f, indent=2)
+                json.dump([vars(r) for r in results], f, indent=2)
         if not args.loop:
             break
         time.sleep(args.loop)

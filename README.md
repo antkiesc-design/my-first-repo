@@ -12,7 +12,7 @@ composite, statistics-based "setup score" (0–100).
 
 ### Run it
 
-Requires Python 3.9+ and nothing else (standard library only).
+Requires Python 3.6+ and nothing else (standard library only).
 
 ```bash
 python3 kraken_scanner.py                       # scan once, top 10
